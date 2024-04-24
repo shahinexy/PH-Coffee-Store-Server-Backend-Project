@@ -94,6 +94,18 @@ async function run() {
       res.send(result)
     })
 
+    app.patch('/user', async (req, res) =>{
+      const user = req.body
+      const filter = {email: user.email}
+      const updateEmail = {
+        $set: {
+          lastLoginAt: user.lastLoginAt
+        }
+      }
+      const result = await userColltection.updateOne(filter, updateEmail)
+      res.send(result)
+    })
+
     app.delete('/user/:id', async (req, res) => {
       const id = req.params.id;
       const query = { _id: new ObjectId(id) }
