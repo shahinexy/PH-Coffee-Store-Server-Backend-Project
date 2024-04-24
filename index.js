@@ -32,27 +32,27 @@ async function run() {
     const coffeeCollection = client.db("coffeeDB").collection('coffee');
     const userColltection = client.db("coffeeDB").collection("user");
 
-    app.get('/coffee', async (req, res)=>{
+    app.get('/coffee', async (req, res) => {
       const course = coffeeCollection.find()
       const result = await course.toArray()
       res.send(result)
     })
 
-    app.get('/coffee/:id', async(req,res)=>{
+    app.get('/coffee/:id', async (req, res) => {
       const id = req.params.id;
-      const query = {_id: new ObjectId(id)}
+      const query = { _id: new ObjectId(id) }
       const result = await coffeeCollection.findOne(query)
       res.send(result)
     })
 
-    app.put('/coffee/:id', async (req,res)=>{
+    app.put('/coffee/:id', async (req, res) => {
       const id = req.params.id;
       const coffee = req.body
       console.log(id, coffee);
-      const filter = {_id: new ObjectId(id)}
-      const options = {upsert: true}
+      const filter = { _id: new ObjectId(id) }
+      const options = { upsert: true }
       const updateCoffee = {
-        $set:{
+        $set: {
           name: coffee.name,
           chef: coffee.chef,
           supplier: coffee.supplier,
@@ -66,25 +66,39 @@ async function run() {
       res.send(result)
     })
 
-    app.post('/coffee', async (req,res)=>{
+    app.post('/coffee', async (req, res) => {
       const newCoffee = req.body;
       console.log(newCoffee);
       const result = await coffeeCollection.insertOne(newCoffee)
       res.send(result)
     })
 
-    app.delete("/coffee/:id", async (req, res)=>{
+    app.delete("/coffee/:id", async (req, res) => {
       const id = req.params.id;
-      const query = {_id : new ObjectId(id)}
+      const query = { _id: new ObjectId(id) }
       const result = await coffeeCollection.deleteOne(query);
       res.send(result)
     })
 
     ///===============  user relaterd API  =============
-    app.post('/user', async (req, res)=>{
+    app.get('/user', async (req, res) => {
+      const cursor = userColltection.find()
+      const result = await cursor.toArray()
+      res.send(result)
+    })
+
+    app.post('/user', async (req, res) => {
       const user = req.body;
       const result = await userColltection.insertOne(user);
       console.log(user);
+      res.send(result)
+    })
+
+    app.delete('/user/:id', async (req, res) => {
+      const id = req.params.id;
+      const query = { _id: new ObjectId(id) }
+      console.log(id, query);
+      const result = await userColltection.deleteOne(query)
       res.send(result)
     })
 
@@ -97,10 +111,10 @@ async function run() {
 run().catch(console.dir);
 
 
-app.get('/', (req, res)=>{
-    res.send('coffee server is running')
+app.get('/', (req, res) => {
+  res.send('coffee server is running')
 })
 
-app.listen(port, ()=>{
-    console.log("server is running on port:", port);
+app.listen(port, () => {
+  console.log("server is running on port:", port);
 })
